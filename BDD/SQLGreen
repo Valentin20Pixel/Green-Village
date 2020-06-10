@@ -1,0 +1,294 @@
+
+CREATE TABLE Fournisseur(
+   four_id INT,
+   four_pro VARCHAR(50),
+   four_prix_ht DECIMAL(15,2),
+   four_pro_ref VARCHAR(50),
+   PRIMARY KEY(four_id)
+);
+
+CREATE TABLE Categories(
+   cat_id INT,
+   cat_nom VARCHAR(50) NOT NULL UNIQUE,
+   cat_parent INT NOT NULL,
+   PRIMARY KEY(cat_id),
+   FOREIGN KEY(cat_parent) REFERENCES Categories(cat_id)
+);
+
+CREATE TABLE Employé(
+   empl_id INT,
+   empl_nom VARCHAR(50) NOT NULL UNIQUE,
+   empl_role VARCHAR(50) NOT NULL,
+   empl_pass VARCHAR(50),
+   empl_remi VARCHAR(50),
+   PRIMARY KEY(empl_id)
+);
+
+CREATE TABLE Client(
+   cli_id INT,
+   cli_nom VARCHAR(50),
+   cli_prenom VARCHAR(50), 
+   entr_nom VARCHAR(50),
+   cli_ref VARCHAR(50),
+   cli_pass VARCHAR(50),
+   cli_user VARCHAR(50),
+   cli_role VARCHAR(50),
+   entr_contact VARCHAR(50),
+   cli_telep VARCHAR(50),
+   cli_mail VARCHAR(130) NOT NULL UNIQUE,
+   adrs_fact VARCHAR(50),
+   code_fact INT,
+   coeff DECIMAL(15,2),
+   empl_id INT NOT NULL,
+   PRIMARY KEY(cli_id),
+   FOREIGN KEY(empl_id) REFERENCES Employé(empl_id)
+);
+
+CREATE TABLE Commande(
+   com_id INT,
+   date_paie DATE,
+   com_etat VARCHAR(50),
+   com_mod VARCHAR(50),
+   prix_uni DECIMAL(15,2),
+   pro_qte INT,
+   total_ht DECIMAL(15,2),
+   TVA INT,
+   empl_id INT NOT NULL,
+   cli_id INT NOT NULL,
+   PRIMARY KEY(com_id),
+   FOREIGN KEY(empl_id) REFERENCES Employé(empl_id),
+   FOREIGN KEY(cli_id) REFERENCES Client(cli_id)
+);
+
+CREATE TABLE Livraison(
+   livr_id INT,
+   livr_date DATE,
+   livr_stat VARCHAR(50),
+   livr_fact VARCHAR(50),
+   livr_bon VARCHAR(50),
+   livr_adrs VARCHAR(50),
+   livr_code VARCHAR(50),
+   PRIMARY KEY(livr_id)
+);
+
+CREATE TABLE Catalogue(
+   pro_id INT,
+   pro_nom VARCHAR(50) NOT NULL,
+   pro_libelle VARCHAR(50) NOT NULL,
+   pro_libellel VARCHAR(50),
+   pro_ref VARCHAR(50) NOT NULL UNIQUE,
+   pro_stock INT NOT NULL,
+   pro_prix_ht DECIMAL(15,2) NOT NULL,
+   pro_photo VARCHAR(50),
+   pro_d_ajout DATE,
+   pro_d_modif DATE NOT NULL,
+   cat_id INT NOT NULL,
+   PRIMARY KEY(pro_id),
+   FOREIGN KEY(cat_id) REFERENCES Categories(cat_id)
+);
+
+CREATE TABLE ligne_commande(
+   ligne_id INT,
+   ligne_qte INT,
+   livr_id INT NOT NULL,
+   com_id INT NOT NULL,
+   pro_id INT NOT NULL,
+   PRIMARY KEY(ligne_id),
+   FOREIGN KEY(livr_id) REFERENCES Livraison(livr_id),
+   FOREIGN KEY(com_id) REFERENCES Commande(com_id),
+   FOREIGN KEY(pro_id) REFERENCES Catalogue(pro_id)
+);
+
+CREATE TABLE Asso_1(
+   four_id INT,
+   pro_id INT,
+   PRIMARY KEY(four_id, pro_id),
+   FOREIGN KEY(four_id) REFERENCES Fournisseur(four_id),
+   FOREIGN KEY(pro_id) REFERENCES Catalogue(pro_id)
+);
+
+CREATE TABLE Asso_4(
+   pro_id INT,
+   empl_id INT,
+   PRIMARY KEY(pro_id, empl_id),
+   FOREIGN KEY(pro_id) REFERENCES Catalogue(pro_id),
+   FOREIGN KEY(empl_id) REFERENCES Employé(empl_id)
+);
+
+INSERT INTO `categories` (`cat_id`,`cat_nom`,`cat_parent`) VALUES 
+(1,"Simvastatin","0"),
+(2,"Prednisone","1"),
+(3,"Potassium Chloride","2"),
+(4,"Paroxetine HCl","3"),
+(5,"Allopurinol","3"),
+(6,"Nuvaring","4"),
+(7,"Cephalexin","1"),
+(8,"Loestrin 24 Fe","5"),
+(9,"Potassium Chloride","4"),
+(10,"Niaspan","2"),
+(11,"Alprazolam","5"),
+(12,"Simvastatin","8"),
+(13,"Zetia","10"),
+(14,"Azithromycin","7"),
+(15,"Fluticasone Propionate","13"),
+(16,"Lisinopril/Hydrochlorothiazide","7"),
+(17,"Levaquin","13"),
+(18,"Albuterol","12"),
+(19,"Azithromycin","15"),
+(20,"Zetia","17");
+
+INSERT INTO `catalogue` (`pro_id`,`pro_nom`,`pro_libelle`,`pro_libellel`,`pro_ref`,`pro_stock`,`pro_prix_ht`,`pro_photo`,`pro_d_ajout`,`pro_d_modif`,`cat_id`) VALUES 
+(1,"FAW","Lorem","Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sed","VPD359","02","78.96","png","2019-07-07 04:24:08","2019-11-07 04:23:57","6"),
+(2,"Dacia","Lorem ipsum","Lorem ipsum dolor sit amet, consectetuer adipiscing elit.","OXX031","42","00.37","jpg","2020-02-16 06:04:06","2020-08-07 04:01:38","5"),
+(3,"Peugeot","Lorem ipsum","Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sed","JVM021","36","27.86","jpg","2020-05-15 21:01:32","2020-05-18 12:10:19","5"),
+(4,"Volvo","Lorem ipsum","Lorem ipsum dolor","SWL956","18","96.71","jpg","2021-02-24 03:57:38","2019-08-25 04:06:09","6"),
+(5,"Renault","Lorem ipsum","Lorem ipsum dolor sit","QMC259","89","59.21","png","2020-07-24 21:28:49","2019-08-11 16:06:50","7"),
+(6,"Volvo","Lorem ipsum","Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur","CIA257","91","28.27","jpg","2019-11-13 11:08:37","2019-07-09 18:00:47","3"),
+(7,"Audi","Lorem ipsum","Lorem ipsum dolor","UWG128","18","37.02","png","2019-12-10 13:05:39","2020-11-01 05:31:10","1"),
+(8,"BMW","Lorem ipsum","Lorem","PBH539","85","88.56","png","2019-09-22 19:27:02","2021-04-04 00:54:42","4"),
+(9,"Toyota","Lorem","Lorem ipsum dolor sit","IXK823","85","11.37","png","2021-03-17 09:50:05","2020-08-08 02:57:52","4"),
+(10,"Ford","Lorem","Lorem ipsum dolor sit amet, consectetuer adipiscing","JVQ446","48","91.03","png","2020-04-16 09:25:48","2020-02-20 02:09:32","6"),
+(11,"Kenworth","Lorem ipsum","Lorem ipsum dolor","TSE961","18","29.33","jpg","2019-07-29 07:49:46","2021-02-13 05:21:56","8"),
+(12,"Fiat","Lorem ipsum","Lorem","SHM728","05","73.42","jpg","2020-03-04 18:12:00","2021-01-12 01:14:50","1"),
+(13,"Chrysler","Lorem ipsum","Lorem ipsum dolor sit","LEN605","12","83.02","jpg","2020-12-09 19:58:14","2020-02-25 00:15:50","2"),
+(14,"Skoda","Lorem ipsum","Lorem ipsum dolor sit amet, consectetuer","HUG643","40","30.14","jpg","2020-06-05 16:22:30","2019-06-24 23:14:58","3"),
+(15,"Kia Motors","Lorem","Lorem ipsum dolor sit amet, consectetuer adipiscing elit.","XAA785","76","88.44","jpg","2020-04-02 14:04:31","2020-07-22 01:25:14","1"),
+(16,"Renault","Lorem ipsum","Lorem ipsum dolor sit","MHD205","71","88.45","png","2021-04-01 08:30:11","2020-08-21 06:06:47","8"),
+(17,"Porsche","Lorem ipsum","Lorem","MPH316","10","52.12","jpg","2020-02-12 13:11:40","2021-05-25 05:16:19","5"),
+(18,"Porsche","Lorem ipsum","Lorem ipsum dolor","BBB855","34","63.55","png","2019-12-06 18:17:21","2020-01-30 19:51:30","3"),
+(19,"RAM Trucks","Lorem ipsum","Lorem ipsum dolor sit amet, consectetuer adipiscing elit.","LKT239","45","91.66","png","2020-09-27 23:53:51","2019-08-29 14:05:57","8"),
+(20,"Mitsubishi Motors","Lorem","Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sed","WPS263","63","58.87","png","2020-12-17 14:31:34","2020-11-24 23:57:22","3");
+
+INSERT INTO `fournisseur` (`four_id`,`four_pro`,`four_prix_ht`,`four_pro_ref`) VALUES 
+(1,"soups","51.97","KTL952"),
+(2,"seafood","67.67","LMJ766"),
+(3,"soups","19.97","QCS919"),
+(4,"cereals","45.18","FKJ407"),
+(5,"salads","59.84","KJR673"),
+(6,"pasta","44.28","DHM521"),
+(7,"sandwiches","11.09","KOP367"),
+(8,"pasta","52.11","OZN540"),
+(9,"pasta","16.97","WHA076"),
+(10,"sandwiches","92.28","NJD069"),
+(11,"stews","89.12","QAT805"),
+(12,"stews","23.63","SJS867"),
+(13,"salads","05.77","GDE353"),
+(14,"stews","30.29","EWU510"),
+(15,"soups","76.64","ILN514"),
+(16,"desserts","32.64","OUK102"),
+(17,"soups","63.06","TME626"),
+(18,"noodles","50.59","UYZ602"),
+(19,"cereals","91.64","UFI224"),
+(20,"pies","60.30","IRH662");
+
+INSERT INTO `employe` (`empl_id`,`empl_nom`,`empl_role`,`empl_pass`,`empl_remi`) VALUES 
+(1,"Raphael U. Ratliff","Admin","PEO81MXH3DT","82"),
+(2,"Reed P. Patterson","Relations presse","DYU28SFB6DL","47"),
+(3,"Oprah D. Harper","Assurance qualité","NWC37BKZ8BM","52"),
+(4,"Irma F. Dickson","Publicité","XLL35ZYS9ZS","86"),
+(5,"Hollee H. Valenzuela","Relations publiques","MGY70FMT2WK","15"),
+(6,"Gil C. Kaufman","Comptables","JIW87CUA4MQ","85"),
+(7,"Chloe X. Harding","Ressources Humaines","GSK28PZN8GU","30"),
+(8,"Nichole I. Hardy","Admin","HTA46HEK8JM","22"),
+(9,"Bianca L. Mullins","Service clientèle","KYF77QFL2ST","44"),
+(10,"Colin X. Bernard","Comptables","YJJ23LWW2LF","29"),
+(11,"Lee I. Hardy","Admin","VGF71XWR7XP","97"),
+(12,"Demetria F. Ewing","Ressources Humaines","JJK62RLF2RI","64"),
+(13,"Cullen Z. Caldwell","Paie","RAN49AWE8CV","79"),
+(14,"Dai L. Oliver","Recherche et Développement","LW07WPG4EF","70"),
+(15,"Medge F. Kennedy","Publicité","MKO12AAI6RJ","96"),
+(16,"Zenaida T. Garrison","Juridique","IMQ39CVG5ZZ","00"),
+(17,"Bruce W. Carney","Ressources Humaines","UJC11OEZ4DC","71"),
+(18,"Heather F. Mccarthy","Ressources Humaines","CRF76KNI7XS","70"),
+(19,"Tatyana T. Greene","Comptables","AUS02YEO0YX","90"),
+(20,"Nehru C. Sexton","Relations presse","TIO88GAC9PM","94");
+
+INSERT INTO `client` (`cli_id`,`cli_nom`,`cli_prenom`,`entr_nom`,`cli_ref`,`cli_pass`,`cli_user`,`cli_role`,`entr_contact`,`cli_telep`,`cli_mail`,`adrs_fact`,`code_fact`,`coeff`,`empl_id`) VALUES 
+(1,"Mercado","Jasper","Id Incorporated","Q1V 0E8","IMV04ANJ5SK","Benedict Hale","Client","Emerald","07 90 51 14 84","sapien@velitCras.net","CP 919, 829 Sapien Impasse","74874","92","8"),
+(2,"Pope","Dominic","Dictum Associates","I8W 7T1","YEF08YDZ7WU","Keefe Sampson","Client","Dawn","02 03 43 64 52","montes.nascetur@SuspendissesagittisNullam.co.uk","670-9069 Quis, Rue","30417","00","5"),
+(3,"Graham","Daniel","Semper Rutrum Associates","Z8B 5A8","SMK20WJW7AP","Anthony Perry","Client","Bethany","05 42 60 52 04","ac.nulla@turpisNullaaliquet.co.uk","420-1871 Ipsum Av.","82513","08","2"),
+(4,"Vang","Chaney","Facilisis Lorem Industries","D2L 7D8","DFQ27WYX8CX","Isaiah Harvey","Client","Melodie","09 30 25 14 90","sit.amet@Incondimentum.com","Appartement 857-7440 Id Chemin","69081","09","5"),
+(5,"Powell","Rafael","Fusce Dolor Corporation","J3L 6M8","ZJH03ANN8WA","Jarrod Ratliff","Client","Noelle","06 59 37 34 84","quis.pede@Quisqueaclibero.co.uk","630-3979 Auctor Av.","55431","77","8"),
+(6,"Pollard","Ishmael","Lectus LLP","D9V 0H6","LPO66DIM8XZ","Dieter Golden","Entreprise","Stella","07 24 27 20 62","Suspendisse.sagittis@egetvarius.ca","530-5852 Turpis. Rd.","13209","34","7"),
+(7,"Thornton","Kelly","Cursus Diam At Incorporated","S1A 4J6","AUN20KHQ7WE","Lance Malone","Client","Allegra","08 86 32 97 75","nascetur.ridiculus.mus@aliquetPhasellusfermentum.com","6509 Donec Rd.","56333","60","3"),
+(8,"Mcdonald","Jakeem","In At Pede Institute","N4V 5E7","QZY84QKR2QU","Flynn Andrews","Entreprise","Sybill","02 63 05 55 82","vehicula@velitAliquamnisl.com","CP 580, 8204 Bibendum Avenue","70683","85","8"),
+(9,"Fisher","Jacob","Risus Quis LLP","I3X 3D2","SRH22XQX8IR","Dexter Berg","Client","Latifah","01 44 53 17 59","Mauris.non.dui@massa.com","5457 Sit Rue","90463","92","1"),
+(10,"Cote","Linus","Cursus Luctus Ipsum Ltd","J5M 6D2","UQP57ZRA0EQ","Rashad Best","Client","Julie","08 20 59 47 69","nostra@ut.net","CP 101, 7040 Sed Route","01124","25","4"),
+(11,"Kent","Hu","Nec Urna Corporation","O8S 0I7","FPC60WIR0YV","Wade Pickett","Entreprise","Anastasia","09 93 25 40 79","non@atiaculis.net","2258 Tempor, Av.","36203","85","5"),
+(12,"Bailey","Paki","Pede Nunc Company","L9Z 3I0","CYI03TXF5EG","Ronan Rodriquez","Client","Madeline","02 57 84 52 06","lacinia@diamvelarcu.ca","CP 578, 6483 Molestie Rue","03379","54","4"),
+(13,"Case","Elliott","Etiam Imperdiet Dictum LLP","H3B 2B8","CMT01UQV9PF","Lance Case","Entreprise","Bo","02 93 41 15 59","Sed@milorem.co.uk","201-6863 Volutpat. Route","11699","00","6"),
+(14,"Sanders","Troy","Vitae Velit PC","R5R 3W0","AUV77DSV8OM","Hector Fowler","Client","Pandora","02 21 34 41 03","consectetuer.ipsum@accumsanneque.co.uk","994-8589 Nulla Rue","26847","80","4"),
+(15,"Lowery","Austin","Interdum Inc.","J1J 9W0","ZVY04EGZ4ZW","Knox Roberson","Entreprise","Dahlia","09 81 33 74 83","Nullam.scelerisque.neque@orci.ca","CP 974, 9378 In Rd.","73198","87","7"),
+(16,"Colon","Lev","Lorem Corp.","O9K 2R4","EMO54XGH3MF","Kane Kramer","Client","Halla","05 12 29 78 90","orci.Phasellus.dapibus@orcisem.edu","Appartement 358-5875 Turpis. Chemin","31254","75","8"),
+(17,"Donovan","Callum","Ut Corporation","F2P 6R6","EIT64OYB7TX","Kelly Kelly","Client","Nelle","07 88 80 17 74","turpis.nec.mauris@arcuet.net","CP 268, 7770 Aliquam Route","62855","85","3"),
+(18,"Steele","Kevin","Elit Curabitur Sed LLP","N7Y 1K4","YAE78QKM1XO","Todd Beck","Entreprise","Rina","05 13 15 77 94","convallis@aliquetsem.edu","5911 Orci Rue","19043","41","4"),
+(19,"Reeves","Brock","Non Corp.","K3D 8K4","LSV36NQI2OH","Tanek Wiley","Entreprise","Nyssa","06 75 89 30 34","accumsan@euultrices.edu","Appartement 323-770 Sed Avenue","73712","73","4"),
+(20,"Young","Hayden","Curabitur Egestas Nunc Institute","W2X 1F1","PJP36QEV6LD","Malcolm Saunders","Client","Nell","04 76 37 52 64","eget.magna@Nullasemper.ca","Appartement 219-8305 Nunc Avenue","03628","78","8");
+
+INSERT INTO `commande` (`com_id`,`date_paie`,`com_etat`,`com_mod`,`prix_uni`,`pro_qte`,`total_ht`,`TVA`,`empl_id`,`cli_id`) VALUES 
+(1,"2019-07-03 01:33:36","4","2020-08-18 09:38:10","62.00","39","129.89","37","18","2"),
+(2,"2019-12-13 22:26:25","3","2021-04-23 23:42:23","80.88","19","878.88","05","4","2"),
+(3,"2020-07-21 21:16:06","9","2021-05-06 10:58:42","12.17","05","604.99","74","4","5"),
+(4,"2020-09-10 09:29:02","7","2020-04-02 11:00:24","50.25","89","594.81","38","2","5"),
+(5,"2021-01-21 13:56:49","7","2019-07-02 11:53:07","32.38","82","540.22","62","18","4"),
+(6,"2019-07-24 01:46:16","1","2020-02-25 01:21:41","24.62","06","763.30","64","11","13"),
+(7,"2021-05-22 11:34:36","8","2020-03-15 14:26:58","67.13","44","568.95","51","12","19"),
+(8,"2019-07-20 21:54:27","3","2019-06-11 17:09:22","39.78","98","176.28","69","17","6"),
+(9,"2020-10-01 22:14:23","2","2020-03-31 21:09:58","21.15","83","343.01","45","15","10"),
+(10,"2021-03-28 06:23:01","6","2021-03-10 04:45:12","06.12","49","240.21","28","5","18"),
+(11,"2020-05-23 10:56:18","9","2020-02-28 17:04:03","52.40","81","039.84","57","2","16"),
+(12,"2020-12-23 12:36:26","1","2021-05-06 02:33:56","01.54","22","949.04","20","1","12"),
+(13,"2021-05-01 16:14:43","4","2021-03-15 02:13:38","90.31","42","347.75","53","20","6"),
+(14,"2019-08-17 10:03:54","10","2020-01-05 00:48:53","05.01","69","623.24","65","11","10"),
+(15,"2019-06-28 18:09:46","6","2021-04-29 16:56:07","69.11","30","437.53","78","4","6"),
+(16,"2020-02-06 12:14:55","10","2020-02-23 15:27:48","92.80","25","556.45","62","17","10"),
+(17,"2020-10-27 04:33:39","1","2020-12-23 07:34:11","48.75","04","802.16","51","3","10"),
+(18,"2020-06-22 14:23:29","4","2020-08-30 21:26:05","69.24","77","273.85","21","8","9"),
+(19,"2020-04-03 17:50:05","4","2020-07-06 11:48:25","59.87","01","205.79","67","15","12"),
+(20,"2019-07-09 09:54:22","4","2021-05-28 12:32:18","50.10","07","013.20","37","9","6");
+
+INSERT INTO `ligne_commande` (`ligne_id`,`ligne_qte`,`livr_id`,`com_id`,`pro_id`) VALUES 
+(1,"19","6","8","13"),
+(2,"19","11","11","18"),
+(3,"1","9","10","20"),
+(4,"19","6","9","8"),
+(5,"17","19","1","14"),
+(6,"18","10","20","2"),
+(7,"11","15","14","4"),
+(8,"11","10","3","20"),
+(9,"19","16","11","16"),
+(10,"11","11","6","14"),
+(11,"1","3","13","12"),
+(12,"13","20","13","15"),
+(13,"7","1","9","9"),
+(14,"5","19","18","19"),
+(15,"2","4","8","2"),
+(16,"2","15","17","17"),
+(17,"3","17","18","10"),
+(18,"17","3","8","18"),
+(19,"20","15","13","18"),
+(20,"16","16","17","1");
+
+
+INSERT INTO `livraison` (`livr_id`,`livr_date`,`livr_stat`,`livr_fact`,`livr_bon`,`livr_adrs`,`livr_code`) VALUES 
+(1,"2021-02-10 10:32:54","2","76111","N0Z 2N9","5144 Massa. Ave","78036"),
+(2,"2019-07-14 08:00:25","4","20713","S6K 3V1","Appartement 745-496 Ultrices, Impasse","7390"),
+(3,"2020-02-23 09:16:39","4","92430","O7S 7X7","283-8842 Pede. Rd.","97836"),
+(4,"2021-05-03 14:14:15","6","96521","I4C 8Y5","CP 605, 518 Et Rue","285188"),
+(5,"2020-02-12 21:54:01","6","15763","I1T 9L2","CP 408, 826 Pede. Rue","Z2979"),
+(6,"2020-11-17 06:12:42","8","58922","V1I 3I7","173-7633 Vivamus Rue","1609"),
+(7,"2020-06-19 22:08:07","9","17917","J8T 5F6","500-2751 Arcu Rue","Z9666"),
+(8,"2019-12-12 08:18:22","1","72805","Q6H 1C4","380-7636 Nunc Route","9348"),
+(9,"2021-03-27 13:02:51","9","61256","W0B 2V0","4506 Tincidunt Chemin","Z36 6BR"),
+(10,"2021-05-31 16:07:21","7","86697","K0V 1V6","332-1690 Semper Chemin","7787"),
+(11,"2020-03-06 19:09:21","5","01635","W7X 0F7","CP 405, 4965 Semper Rd.","32761-84662"),
+(12,"2020-10-03 22:03:04","9","67297","U6R 4I6","8110 Ut, Chemin","6421"),
+(13,"2020-04-15 11:11:55","4","63330","L5R 9Y7","6616 Lacus. Ave","331871"),
+(14,"2020-02-09 18:27:10","4","30222","F8J 0U0","Appartement 358-3041 Nonummy Av.","81853"),
+(15,"2021-04-30 00:04:13","8","20291","Y8Q 7M0","292-713 Convallis Av.","68316"),
+(16,"2020-07-04 17:08:48","1","57914","K9X 0L8","4165 In Chemin","96643-41315"),
+(17,"2020-04-10 06:54:43","6","24284","U6F 3E8","CP 957, 2191 Ligula Rue","837268"),
+(18,"2021-05-07 11:53:32","1","69841","X4G 9V8","Appartement 418-6672 Ipsum Ave","81718"),
+(19,"2019-12-16 07:05:34","8","76716","T7I 9Q0","CP 584, 4288 Non Chemin","Z7942"),
+(20,"2020-04-05 19:10:05","4","71842","Y0L 0E8","Appartement 242-8839 Neque Route","828878");
+
